@@ -1,5 +1,5 @@
 [package]
-name = "quantities"
+name = "quantity_macros"
 version = "0.11.0"
 edition = "2021"
 authors = ["Michael Amrhein <michael@adrhinum.de>"]
@@ -19,4 +19,4 @@ qty-macros = { version = "0.11.0", path = "qty-macros" }
 trybuild = "1"
 
 [workspace]
-members = [".", "qty-macros", "physical_quantities"]
+members = [".", "qty-macros"]
