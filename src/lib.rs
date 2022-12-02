@@ -65,12 +65,7 @@ use core::{
     ops::{Add, Div, Mul, Sub},
 };
 
-#[cfg(feature = "fpdec")]
-pub use amnt_dec::{AmountT, Dec, Decimal, AMNT_ONE, AMNT_ZERO};
-#[cfg(all(not(feature = "fpdec"), target_pointer_width = "32"))]
-pub use amnt_f32::{AmountT, AMNT_ONE, AMNT_ZERO};
-#[cfg(all(not(feature = "fpdec"), target_pointer_width = "64"))]
-pub use amnt_f64::{Amount, AMNT_ONE, AMNT_ZERO};
+pub use value::{Amount, AMNT_ZERO, AMNT_ONE};
 pub use converter::{ConversionTable, Converter};
 pub use rate::Rate;
 pub use si_prefixes::SIPrefix;
@@ -80,43 +75,22 @@ pub mod prelude;
 mod rate;
 mod si_prefixes;
 
-#[cfg(feature = "fpdec")]
 #[doc(hidden)]
-pub mod amnt_dec;
-#[cfg(all(not(feature = "fpdec"), target_pointer_width = "32"))]
-#[doc(hidden)]
-pub mod amnt_f32;
-#[cfg(all(not(feature = "fpdec"), target_pointer_width = "64"))]
-#[doc(hidden)]
-pub mod amnt_f64;
+pub mod value;
 
-// #[cfg(feature = "acceleration")]
 pub mod acceleration;
-// #[cfg(feature = "area")]
 pub mod area;
-// #[cfg(feature = "datathroughput")]
 pub mod datathroughput;
-// #[cfg(feature = "datavolume")]
 pub mod datavolume;
-// #[cfg(feature = "duration")]
 pub mod duration;
-// #[cfg(feature = "energy")]
 pub mod energy;
-// #[cfg(feature = "force")]
 pub mod force;
-// #[cfg(feature = "frequency")]
 pub mod frequency;
-// #[cfg(feature = "length")]
 pub mod length;
-// #[cfg(feature = "mass")]
 pub mod mass;
-// #[cfg(feature = "power")]
 pub mod power;
-// #[cfg(feature = "speed")]
 pub mod speed;
-// #[cfg(feature = "temperature")]
 pub mod temperature;
-// #[cfg(feature = "volume")]
 pub mod volume;
 
 /// The abstract type of units used to define quantities.
