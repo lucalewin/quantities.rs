@@ -19,4 +19,4 @@ qty-macros = { version = "0.11.0", path = "qty-macros" }
 trybuild = "1"
 
 [workspace]
-members = [".", "qty-macros"]
+members = [".", "qty-macros", "physical_quantities"]
