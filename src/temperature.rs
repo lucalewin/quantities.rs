@@ -39,21 +39,21 @@ pub struct Temperature {}
 pub const TEMPERATURE_CONVERTER: ConversionTable<Temperature, 6> =
     ConversionTable {
         mappings: [
-            (KELVIN, DEGREE_CELSIUS, Amnt!(1), Amnt!(-273.15)),
-            (DEGREE_CELSIUS, KELVIN, Amnt!(1), Amnt!(273.15)),
-            (KELVIN, DEGREE_FAHRENHEIT, Amnt!(1.8), Amnt!(-459.67)),
+            (KELVIN, DEGREE_CELSIUS, 1.0, -273.15),
+            (DEGREE_CELSIUS, KELVIN, 1.0, 273.15),
+            (KELVIN, DEGREE_FAHRENHEIT, 1.8, -459.67),
             (
                 DEGREE_FAHRENHEIT,
                 KELVIN,
-                Amnt!(0.555555555555555556),
-                Amnt!(255.372222222222222222),
+                0.555_555_555_555_555_6,
+                255.372_222_222_222_23,
             ),
-            (DEGREE_CELSIUS, DEGREE_FAHRENHEIT, Amnt!(1.8), Amnt!(32)),
+            (DEGREE_CELSIUS, DEGREE_FAHRENHEIT, 1.8, 32.0),
             (
                 DEGREE_FAHRENHEIT,
                 DEGREE_CELSIUS,
-                Amnt!(0.555555555555555556),
-                Amnt!(-17.777777777777777778),
+                0.555_555_555_555_555_6,
+                -17.777_777_777_777_78,
             ),
         ],
     };
@@ -65,9 +65,9 @@ mod tests {
 
     #[test]
     fn test_temperature() {
-        let amnt: AmountT = Amnt!(21.5);
+        let amnt = 21.5;
         let m = amnt * KELVIN;
-        assert_eq!(m.amount, amnt);
+        assert_eq!(m.value, amnt);
         assert_eq!(m.unit, KELVIN);
         #[cfg(feature = "std")]
         assert_eq!(m.to_string(), "21.5 K");
@@ -75,26 +75,26 @@ mod tests {
 
     #[test]
     fn test_temp_converter() {
-        let tk: Temperature = Amnt!(17.5) * KELVIN;
+        let tk: Temperature = 17.5 * KELVIN;
         assert_eq!(TEMPERATURE_CONVERTER.convert(&tk, KELVIN), Some(tk));
         let tc = TEMPERATURE_CONVERTER.convert(&tk, DEGREE_CELSIUS).unwrap();
         assert_eq!(tc.unit(), DEGREE_CELSIUS);
-        assert_almost_eq!(tc.amount(), Amnt!(-255.65));
+        assert_almost_eq!(tc.value(), -255.65_f64);
         let tk2 = TEMPERATURE_CONVERTER.convert(&tc, KELVIN).unwrap();
-        assert_almost_eq!(tk2.amount(), tk.amount());
+        assert_almost_eq!(tk2.value(), tk.value());
         let tf = TEMPERATURE_CONVERTER
             .convert(&tk, DEGREE_FAHRENHEIT)
             .unwrap();
         assert_eq!(tf.unit(), DEGREE_FAHRENHEIT);
-        assert_almost_eq!(tf.amount(), Amnt!(-428.17));
+        assert_almost_eq!(tf.value(), -428.17_f64);
         let tk2 = TEMPERATURE_CONVERTER.convert(&tf, KELVIN).unwrap();
-        assert_almost_eq!(tk2.amount(), tk.amount());
-        let tc: Temperature = Amnt!(34.7) * DEGREE_CELSIUS;
+        assert_almost_eq!(tk2.value(), tk.value());
+        let tc: Temperature = 34.7 * DEGREE_CELSIUS;
         let tf = TEMPERATURE_CONVERTER
             .convert(&tc, DEGREE_FAHRENHEIT)
             .unwrap();
-        assert_almost_eq!(tf.amount(), Amnt!(94.46));
+        assert_almost_eq!(tf.value(), 94.46_f64);
         let tc2 = TEMPERATURE_CONVERTER.convert(&tf, DEGREE_CELSIUS).unwrap();
-        assert_almost_eq!(tc2.amount, tc.amount);
+        assert_almost_eq!(tc2.value, tc.value);
     }
 }

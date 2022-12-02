@@ -29,73 +29,73 @@ mod rate_tests {
     #[test]
     fn test_rate() {
         let r =
-            Rate::<Foo, Bar>::new(Amnt!(329.4), FLOP, Amnt!(100), MILLIEMIL);
-        assert_eq!(r.term_amount(), Amnt!(329.4));
+            Rate::<Foo, Bar>::new(329.4, FLOP, 100.0, MILLIEMIL);
+        assert_eq!(r.term_amount(), 329.4);
         assert_eq!(r.term_unit(), FLOP);
-        assert_eq!(r.per_unit_multiple(), Amnt!(100));
+        assert_eq!(r.per_unit_multiple(), 100.0);
         assert_eq!(r.per_unit(), MILLIEMIL);
     }
 
     #[test]
     fn test_rate_from_qty_vals() {
         let r =
-            Rate::from_qty_vals(Amnt!(329.4) * FLOP, Amnt!(100) * MILLIEMIL);
-        assert_eq!(r.term_amount(), Amnt!(329.4));
+            Rate::from_qty_vals(329.4 * FLOP, 100.0 * MILLIEMIL);
+        assert_eq!(r.term_amount(), 329.4);
         assert_eq!(r.term_unit(), FLOP);
-        assert_eq!(r.per_unit_multiple(), Amnt!(100));
+        assert_eq!(r.per_unit_multiple(), 100.0);
         assert_eq!(r.per_unit(), MILLIEMIL);
     }
 
     #[test]
     fn test_rate_dimless() {
-        let r = Rate::from_qty_vals(Amnt!(29.2), Amnt!(100));
-        assert_eq!(r.term_amount(), Amnt!(29.2));
+        let r = Rate::from_qty_vals(29.2, 100.0);
+        assert_eq!(r.term_amount(), 29.2);
         assert_eq!(r.term_unit(), ONE);
-        assert_eq!(r.per_unit_multiple(), Amnt!(100));
+        assert_eq!(r.per_unit_multiple(), 100.0);
         assert_eq!(r.per_unit(), ONE);
     }
 
     #[test]
     fn test_rate_reciprocal() {
         let r =
-            Rate::from_qty_vals(Amnt!(329.4) * FLOP, Amnt!(100) * MILLIEMIL);
+            Rate::from_qty_vals(329.4 * FLOP, 100.0 * MILLIEMIL);
         let r = r.reciprocal();
-        assert_eq!(r.term_amount(), Amnt!(100));
+        assert_eq!(r.term_amount(), 100.0);
         assert_eq!(r.term_unit(), MILLIEMIL);
-        assert_eq!(r.per_unit_multiple(), Amnt!(329.4));
+        assert_eq!(r.per_unit_multiple(), 329.4);
         assert_eq!(r.per_unit(), FLOP);
     }
 
     #[test]
     fn test_rate_mul_qty() {
         let r =
-            Rate::from_qty_vals(Amnt!(329.4) * FLOP, Amnt!(100) * MILLIEMIL);
-        let b = Amnt!(7.5) * EMIL;
+            Rate::from_qty_vals(329.4 * FLOP, 100.0 * MILLIEMIL);
+        let b = 7.5 * EMIL;
         let f = r * b;
         assert_eq!(f.unit, r.term_unit());
-        assert_almost_eq!(f.amount, Amnt!(24705));
+        assert_almost_eq!(f.value, 24705.0_f64);
         assert_eq!(f, b * r);
     }
 
     #[test]
     fn test_qty_div_rate() {
-        let f = Amnt!(7.5) * KILOFLOP;
-        let r = Rate::from_qty_vals(Amnt!(25) * FLOP, Amnt!(100) * MILLIEMIL);
+        let f = 7.5 * KILOFLOP;
+        let r = Rate::from_qty_vals(25.0 * FLOP, 100.0 * MILLIEMIL);
         let b = f / r;
         assert_eq!(b.unit, r.per_unit());
-        assert_almost_eq!(b.amount, Amnt!(30000));
+        assert_almost_eq!(b.value, 30000.0_f64);
     }
 
     #[test]
     fn test_rate_to_string() {
         let r =
-            Rate::from_qty_vals(Amnt!(329.4) * FLOP, Amnt!(100) * MILLIEMIL);
+            Rate::from_qty_vals(329.4 * FLOP, 100.0 * MILLIEMIL);
         assert_eq!(r.to_string(), "329.4 f / 100 me");
-        let r = Rate::from_qty_vals(Amnt!(329.4) * FLOP, Amnt!(1) * MILLIEMIL);
+        let r = Rate::from_qty_vals(329.4 * FLOP, 1.0 * MILLIEMIL);
         assert_eq!(r.to_string(), "329.4 f / me");
-        let r = Rate::from_qty_vals(Amnt!(4) * FLOP, Amnt!(1));
+        let r = Rate::from_qty_vals(4.0 * FLOP, 1.0);
         assert_eq!(r.to_string(), "4 f / 1");
-        let r = Rate::from_qty_vals(Amnt!(7.4) * FLOP, Amnt!(100));
+        let r = Rate::from_qty_vals(7.4 * FLOP, 100.0);
         assert_eq!(r.to_string(), "7.4 f / 100");
     }
 }

@@ -59,9 +59,9 @@ mod tests {
     fn test_area() {
         assert_eq!(<Area as HasRefUnit>::REF_UNIT, AreaUnit::REF_UNIT);
         assert!(SQUARE_METER.is_ref_unit());
-        let amnt: AmountT = Amnt!(29.35);
+        let amnt = 29.35;
         let l = amnt * SQUARE_CENTIMETER;
-        assert_eq!(l.amount(), amnt);
+        assert_eq!(l.value(), amnt);
         assert_eq!(l.unit(), SQUARE_CENTIMETER);
         #[cfg(feature = "std")]
         assert_eq!(l.to_string(), "29.35 cm²");
@@ -69,25 +69,25 @@ mod tests {
 
     #[test]
     fn test_length_mul_length() {
-        let amnt: AmountT = Amnt!(29.3);
+        let amnt = 29.3;
         let l = amnt * CENTIMETER;
         let a = l * l;
-        assert_almost_eq!(a.amount(), amnt * amnt);
+        assert_almost_eq!(a.value(), amnt * amnt);
         assert_eq!(a.unit(), SQUARE_CENTIMETER);
-        let w = Amnt!(2.) * KILOMETER;
+        let w = 2. * KILOMETER;
         let h = amnt * CENTIMETER;
         let a = w * h;
-        assert_almost_eq!(a.amount(), Amnt!(0.2) * amnt);
+        assert_almost_eq!(a.value(), 0.2 * amnt);
         assert_eq!(a.unit(), ARE);
     }
 
     #[test]
     fn test_aera_div_length() {
-        let amnt: AmountT = Amnt!(29.4);
+        let amnt = 29.4;
         let a = amnt * HECTARE;
-        let w = Amnt!(0.7) * KILOMETER;
+        let w = 0.7 * KILOMETER;
         let h = a / w;
-        assert_almost_eq!(h.amount(), Amnt!(420.));
+        assert_almost_eq!(h.value(), 420.0_f64);
         assert_eq!(h.unit(), METER);
     }
 }

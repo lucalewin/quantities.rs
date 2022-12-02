@@ -19,13 +19,13 @@ use crate::prelude::*;
 #[unit(Kilobyte, "kB", KILO, 1000, "1000·B")]
 #[unit(Kibibyte, "KiB", 1024, "1024·B")]
 #[unit(Megabit, "Mb", 125000, "1000000·b")]
-#[unit(Mebibit, "Mib", 131072, "1048576·b")]
+#[unit(Mebibit, "Mib", 0x0002_0000, "1048576·b")]
 #[unit(Megabyte, "MB", MEGA, 1000000, "1000000·B")]
-#[unit(Mebibyte, "MiB", 1048576, "1048576·B")]
+#[unit(Mebibyte, "MiB", 0x0010_0000, "1048576·B")]
 #[unit(Gigabit, "Gb", 125000000, "1000000000·b")]
-#[unit(Gibibit, "Gib", 134217728, "1073741824·b")]
+#[unit(Gibibit, "Gib", 0x0800_0000, "1073741824·b")]
 #[unit(Gigabyte, "GB", GIGA, 1000000000, "1000000000·B")]
-#[unit(Gibibyte, "GiB", 1073741824, "1073741824·B")]
+#[unit(Gibibyte, "GiB", 0x4000_0000, "1073741824·B")]
 #[unit(Terabit, "Tb", 125000000000., "1000000000000·b")]
 #[unit(Tebibit, "Tib", 137438953472., "1099511627776·b")]
 #[unit(Terabyte, "TB", TERA, 1000000000000., "1000000000000·B")]
@@ -63,17 +63,17 @@ mod tests {
 
     #[test]
     fn test_datavolume() {
-        let amnt: AmountT = Amnt!(375);
+        let amnt = 375.0;
         let d = amnt * GIBIBYTE;
-        assert_eq!(d.amount, amnt);
+        assert_eq!(d.value, amnt);
         assert_eq!(d.unit, GIBIBYTE);
         #[cfg(feature = "std")]
         assert_eq!(d.to_string(), "375 GiB");
         let d = d.convert(TERABYTE);
         assert_eq!(d.unit, TERABYTE);
-        assert_eq!(d.amount, Amnt!(0.402653184));
+        assert_eq!(d.value, 0.402653184);
         let d = d.convert(KIBIBYTE);
         assert_eq!(d.unit, KIBIBYTE);
-        assert_eq!(d.amount, Amnt!(393216000));
+        assert_eq!(d.value, 393216000.0);
     }
 }

@@ -39,12 +39,12 @@ mod tests {
 
     #[test]
     fn test_force_mul_length() {
-        let af = Amnt!(785.3);
+        let af = 785.3;
         let f = af * NEWTON;
-        let al: AmountT = Amnt!(38.4);
+        let al = 38.4;
         let l = al * KILOMETER;
         let e = f * l;
-        assert_almost_eq!(e.amount(), af * al * Amnt!(1000.));
+        assert_almost_eq!(e.value(), af * al * 1000.);
         assert_eq!(e.unit(), JOULE);
     }
 }

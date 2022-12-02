@@ -12,14 +12,14 @@ use core::{
     ops::{Div, Mul},
 };
 
-use crate::{AmountT, Quantity, Unit, AMNT_ONE};
+use crate::{Amount, Quantity, Unit, AMNT_ONE};
 
 /// The ratio between two related quantity values.
 #[derive(Copy, Clone, Debug)]
 pub struct Rate<TQ: Quantity, PQ: Quantity> {
-    term_amount: AmountT,
+    term_amount: Amount,
     term_unit: TQ::UnitType,
-    per_unit_multiple: AmountT,
+    per_unit_multiple: Amount,
     per_unit: PQ::UnitType,
 }
 
@@ -27,9 +27,9 @@ impl<TQ: Quantity, PQ: Quantity> Rate<TQ, PQ> {
     /// Returns a new instance of `Rate` with attributes equal to given params.
     #[inline(always)]
     pub const fn new(
-        term_amount: AmountT,
+        term_amount: Amount,
         term_unit: TQ::UnitType,
-        per_unit_multiple: AmountT,
+        per_unit_multiple: Amount,
         per_unit: PQ::UnitType,
     ) -> Self {
         Self {
@@ -45,16 +45,16 @@ impl<TQ: Quantity, PQ: Quantity> Rate<TQ, PQ> {
     #[inline(always)]
     pub fn from_qty_vals(term: TQ, per: PQ) -> Self {
         Self {
-            term_amount: term.amount(),
+            term_amount: term.value(),
             term_unit: term.unit(),
-            per_unit_multiple: per.amount(),
+            per_unit_multiple: per.value(),
             per_unit: per.unit(),
         }
     }
 
     /// Returns the term amount of `self`.
     #[inline(always)]
-    pub const fn term_amount(&self) -> AmountT {
+    pub const fn term_amount(&self) -> Amount {
         self.term_amount
     }
 
@@ -66,7 +66,7 @@ impl<TQ: Quantity, PQ: Quantity> Rate<TQ, PQ> {
 
     /// Returns the per unit multiple of `self`.
     #[inline(always)]
-    pub const fn per_unit_multiple(&self) -> AmountT {
+    pub const fn per_unit_multiple(&self) -> Amount {
         self.per_unit_multiple
     }
 
@@ -116,12 +116,12 @@ impl<TQ: Quantity, PQ: Quantity> fmt::Display for Rate<TQ, PQ> {
 
 impl<TQ: Quantity, PQ: Quantity> Mul<PQ> for Rate<TQ, PQ>
 where
-    PQ: Div<PQ, Output = AmountT>,
+    PQ: Div<PQ, Output = Amount>,
 {
     type Output = TQ;
 
     fn mul(self, rhs: PQ) -> Self::Output {
-        let amnt: AmountT =
+        let amnt: Amount =
             (rhs / self.per_unit().as_qty()) / self.per_unit_multiple();
         Self::Output::new(amnt * self.term_amount(), self.term_unit())
     }

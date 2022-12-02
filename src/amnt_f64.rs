@@ -17,22 +17,22 @@
 ///
 /// The macro `Amnt!` can be used to convert float literals correctly to
 /// `AmountT` depending on the configuration.
-pub type AmountT = f64;
+pub type Amount = f64;
 
 /// AmountT constant equal 0
-pub const AMNT_ZERO: AmountT = 0.;
+pub const AMNT_ZERO: Amount = 0.;
 
 /// AmountT constant equal 1
-pub const AMNT_ONE: AmountT = 1.;
+pub const AMNT_ONE: Amount = 1.;
 
-#[allow(non_snake_case)]
-#[macro_export]
-/// Converts a numeric literal to an `AmountT`.
-macro_rules! Amnt {
-    ($lit:literal) => {
-        $lit as f64
-    };
-}
+// #[allow(non_snake_case)]
+// #[macro_export]
+// /// Converts a numeric literal to an `AmountT`.
+// macro_rules! Amnt {
+//     ($lit:literal) => {
+//         $lit as f64
+//     };
+// }
 
 #[doc(hidden)]
 #[macro_export]

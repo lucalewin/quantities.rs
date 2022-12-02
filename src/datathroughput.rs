@@ -24,13 +24,13 @@ use crate::{datavolume::DataVolume, duration::Duration, prelude::*};
 #[unit(Kilobyte_per_Second, "kB/s", KILO, 1000, "1000·B/s")]
 #[unit(Kibibyte_per_Second, "KiB/s", 1024, "1024·B/s")]
 #[unit(Megabit_per_Second, "Mb/s", 125000, "1000000·b/s")]
-#[unit(Mebibit_per_Second, "Mib/s", 131072, "1048576·b/s")]
+#[unit(Mebibit_per_Second, "Mib/s", 0x0002_0000, "1048576·b/s")]
 #[unit(Megabyte_per_Second, "MB/s", MEGA, 1000000, "1000000·B/s")]
-#[unit(Mebibyte_per_Second, "MiB/s", 1048576, "1048576·B/s")]
+#[unit(Mebibyte_per_Second, "MiB/s", 0x0010_0000, "1048576·B/s")]
 #[unit(Gigabit_per_Second, "Gb/s", 125000000, "1000000000·b/s")]
-#[unit(Gibibit_per_Second, "Gib/s", 134217728, "1073741824·b/s")]
+#[unit(Gibibit_per_Second, "Gib/s", 0x0800_0000, "1073741824·b/s")]
 #[unit(Gigabyte_per_Second, "GB/s", GIGA, 1000000000, "1000000000·B/s")]
-#[unit(Gibibyte_per_Second, "GiB/s", 1073741824, "1073741824·B/s")]
+#[unit(Gibibyte_per_Second, "GiB/s", 0x4000_0000, "1073741824·B/s")]
 #[unit(Terabit_per_Second, "Tb/s", 125000000000., "1000000000000·b/s")]
 #[unit(Tebibit_per_Second, "Tib/s", 137438953472., "1099511627776·b/s")]
 #[unit(Terabyte_per_Second, "TB/s", TERA, 1000000000000., "1000000000000·B/s")]
@@ -73,12 +73,12 @@ mod tests {
 
     #[test]
     fn test_datavolume_div_duration() {
-        let ad: AmountT = Amnt!(837.5);
+        let ad = 837.5;
         let d = ad * MEBIBYTE;
-        let at = Amnt!(2.5);
+        let at = 2.5;
         let t = at * MILLISECOND;
         let r = d / t;
-        assert_almost_eq!(r.amount(), ad / at * Amnt!(1.048576));
+        assert_almost_eq!(r.value(), ad / at * 1.048576);
         assert_eq!(r.unit(), GIGABYTE_PER_SECOND);
     }
 }

@@ -389,17 +389,17 @@ fn codegen_impl_mul_amnt_unit(
     unit_enum_ident: &syn::Ident,
 ) -> TokenStream {
     quote!(
-        impl Mul<#unit_enum_ident> for AmountT {
+        impl Mul<#unit_enum_ident> for Amount {
             type Output = #qty_ident;
             #[inline(always)]
             fn mul(self, rhs: #unit_enum_ident) -> Self::Output {
                 Self::Output::new(self, rhs)
             }
         }
-        impl Mul<AmountT> for #unit_enum_ident {
+        impl Mul<Amount> for #unit_enum_ident {
             type Output = #qty_ident;
             #[inline(always)]
-            fn mul(self, rhs: AmountT) -> Self::Output {
+            fn mul(self, rhs: Amount) -> Self::Output {
                 Self::Output::new(rhs, self)
             }
         }
@@ -434,19 +434,19 @@ fn codegen_qty_single_unit(
         }
         #[derive(Copy, Clone, Debug)]
         pub struct #qty_ident {
-            amount: AmountT
+            value: Amount
         }
         impl Quantity for #qty_ident {
             type UnitType = #unit_enum_ident;
 
             #[inline(always)]
-            fn new(amount: AmountT, _unit: Self::UnitType) -> Self {
-                Self { amount }
+            fn new(value: Amount, _unit: Self::UnitType) -> Self {
+                Self { value }
             }
 
             #[inline(always)]
-            fn amount(&self) -> AmountT {
-                self.amount
+            fn value(&self) -> Amount {
+                self.value
             }
 
             #[inline(always)]
@@ -458,21 +458,21 @@ fn codegen_qty_single_unit(
             type Output = Self;
             #[inline(always)]
             fn add(self, rhs: Self) -> Self::Output {
-                Self::new(self.amount() + rhs.amount(), self.unit())
+                Self::new(self.value() + rhs.value(), self.unit())
             }
         }
         impl Sub<Self> for #qty_ident {
             type Output = Self;
             #[inline(always)]
             fn sub(self, rhs: Self) -> Self::Output {
-                Self::new(self.amount() - rhs.amount(), self.unit())
+                Self::new(self.value() - rhs.value(), self.unit())
             }
         }
         impl Div<Self> for #qty_ident {
-            type Output = AmountT;
+            type Output = Amount;
             #[inline(always)]
             fn div(self, rhs: Self) -> Self::Output {
-                self.amount() / rhs.amount()
+                self.value() / rhs.value()
             }
         }
     )
@@ -579,18 +579,18 @@ fn codegen_impl_quantity(
     quote!(
         #[derive(Copy, Clone, Debug)]
         pub struct #qty_ident {
-            amount: AmountT,
+            value: Amount,
             unit: #unit_enum_ident
         }
         impl Quantity for #qty_ident {
             type UnitType = #unit_enum_ident;
             #[inline(always)]
-            fn new(amount: AmountT, unit: Self::UnitType) -> Self {
-                Self { amount, unit }
+            fn new(value: Amount, unit: Self::UnitType) -> Self {
+                Self { value, unit }
             }
             #[inline(always)]
-            fn amount(&self) -> AmountT {
-                self.amount
+            fn value(&self) -> Amount {
+                self.value
             }
             #[inline(always)]
             fn unit(&self) -> Self::UnitType {
@@ -655,7 +655,7 @@ fn codegen_qty_without_ref_unit(
             }
         }
         impl Div<Self> for #qty_ident {
-            type Output = AmountT;
+            type Output = Amount;
             #[inline(always)]
             fn div(self, rhs: Self) -> Self::Output {
                 <Self as Quantity>::div(self, rhs)
@@ -695,7 +695,7 @@ fn codegen_fn_scale(units: &Vec<UnitDef>) -> TokenStream {
             let unit_scale: &syn::Lit = unit.scale.as_ref().unwrap();
             code = quote!(
                 #code
-                Self::#unit_ident => Amnt!(#unit_scale),
+                Self::#unit_ident => #unit_scale as Amount,
             )
         } else {
             // should not happen!
@@ -703,7 +703,7 @@ fn codegen_fn_scale(units: &Vec<UnitDef>) -> TokenStream {
         }
     }
     quote!(
-        fn scale(&self) -> AmountT {
+        fn scale(&self) -> Amount {
             match self {
                 #code
             }
@@ -779,7 +779,7 @@ fn codegen_qty_with_ref_unit(
             }
         }
         impl Div<Self> for #qty_ident {
-            type Output = AmountT;
+            type Output = Amount;
             #[inline(always)]
             fn div(self, rhs: Self) -> Self::Output {
                 <Self as HasRefUnit>::div(self, rhs)
@@ -796,32 +796,32 @@ fn codegen_impl_std_traits(qty_ident: &syn::Ident) -> TokenStream {
                 <Self as Quantity>::fmt(self, f)
             }
         }
-        impl Mul<#qty_ident> for AmountT {
+        impl Mul<#qty_ident> for Amount {
             type Output = #qty_ident;
             #[inline(always)]
             fn mul(self, rhs: #qty_ident) -> Self::Output {
-                Self::Output::new(self * rhs.amount(), rhs.unit())
+                Self::Output::new(self * rhs.value(), rhs.unit())
             }
         }
-        impl Mul<AmountT> for #qty_ident {
+        impl Mul<Amount> for #qty_ident {
             type Output = Self;
             #[inline(always)]
-            fn mul(self, rhs: AmountT) -> Self::Output {
-                Self::Output::new(self.amount() * rhs, self.unit())
+            fn mul(self, rhs: Amount) -> Self::Output {
+                Self::Output::new(self.value() * rhs, self.unit())
             }
         }
-        impl Div<AmountT> for #qty_ident {
+        impl Div<Amount> for #qty_ident {
             type Output = Self;
             #[inline(always)]
-            fn div(self, rhs: AmountT) -> Self::Output {
-                Self::Output::new(self.amount() / rhs, self.unit())
+            fn div(self, rhs: Amount) -> Self::Output {
+                Self::Output::new(self.value() / rhs, self.unit())
             }
         }
         impl<TQ: Quantity> Mul<Rate<TQ, Self>> for #qty_ident {
             type Output = TQ;
 
             fn mul(self, rhs: Rate<TQ, Self>) -> Self::Output {
-                let amnt: AmountT =
+                let amnt: Amount =
                     (self / rhs.per_unit().as_qty()) / rhs.per_unit_multiple();
                 Self::Output::new(amnt * rhs.term_amount(), rhs.term_unit())
             }
@@ -830,7 +830,7 @@ fn codegen_impl_std_traits(qty_ident: &syn::Ident) -> TokenStream {
             type Output = PQ;
 
             fn div(self, rhs: Rate<Self, PQ>) -> Self::Output {
-                let amnt: AmountT =
+                let amnt: Amount =
                     (self / rhs.term_unit().as_qty()) / rhs.term_amount();
                 Self::Output::new(
                     amnt * rhs.per_unit_multiple(),
@@ -856,10 +856,10 @@ fn codegen_impl_qty_sqared(
                     self.unit().scale() * rhs.unit().scale();
                 match Self::Output::unit_from_scale(scale) {
                     Some(unit) =>
-                        Self::Output::new(self.amount() * rhs.amount(), unit),
+                        Self::Output::new(self.value() * rhs.value(), unit),
                     None =>
                         <Self::Output as HasRefUnit>::_fit(
-                            self.amount() * rhs.amount() * scale
+                            self.value() * rhs.value() * scale
                         )
                 }
             }
@@ -914,10 +914,10 @@ fn codegen_impl_qty_mul_qty(
                     self.unit().scale() * rhs.unit().scale();
                 match Self::Output::unit_from_scale(scale) {
                     Some(unit) =>
-                        Self::Output::new(self.amount() * rhs.amount(), unit),
+                        Self::Output::new(self.value() * rhs.value(), unit),
                     None =>
                         <Self::Output as HasRefUnit>::_fit(
-                            self.amount() * rhs.amount() * scale
+                            self.value() * rhs.value() * scale
                         )
                 }
             }
@@ -1000,10 +1000,10 @@ fn codegen_impl_div_qties(
                     self.unit().scale() / rhs.unit().scale();
                 match Self::Output::unit_from_scale(scale) {
                     Some(unit) =>
-                        Self::Output::new(self.amount() / rhs.amount(), unit),
+                        Self::Output::new(self.value() / rhs.value(), unit),
                     None =>
                         <Self::Output as HasRefUnit>::_fit(
-                            (self.amount() / rhs.amount()) * scale
+                            (self.value() / rhs.value()) * scale
                         )
                 }
             }
@@ -1115,7 +1115,7 @@ pub(crate) fn codegen(
 ) -> TokenStream {
     let qty_ident = qty_def.qty_ident.clone();
     let unit_enum_ident =
-        syn::Ident::new(&*format!("{}Unit", qty_ident), Span::call_site());
+        syn::Ident::new(&format!("{}Unit", qty_ident), Span::call_site());
     let code_attrs = codegen_attrs(attrs);
     let code_qty = if qty_def.units.len() == 1 {
         let unit_ident = qty_def.units[0].unit_ident.clone();

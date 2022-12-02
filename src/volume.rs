@@ -61,9 +61,9 @@ mod tests {
     fn test_volume() {
         assert_eq!(<Volume as HasRefUnit>::REF_UNIT, VolumeUnit::REF_UNIT);
         assert!(CUBIC_METER.is_ref_unit());
-        let amnt: AmountT = Amnt!(29.305);
+        let amnt = 29.305;
         let v = amnt * CUBIC_DECIMETER;
-        assert_eq!(v.amount(), amnt);
+        assert_eq!(v.value(), amnt);
         assert_eq!(v.unit(), CUBIC_DECIMETER);
         #[cfg(feature = "std")]
         assert_eq!(v.to_string(), "29.305 dm³");
@@ -71,26 +71,26 @@ mod tests {
 
     #[test]
     fn test_length_mul_area() {
-        let amnt: AmountT = Amnt!(2.1);
+        let amnt = 2.1;
         let l = amnt * DECIMETER;
         let a = l * l;
         let v = l * a;
-        assert_almost_eq!(v.amount(), amnt * amnt * amnt);
+        assert_almost_eq!(v.value(), amnt * amnt * amnt);
         assert_eq!(v.unit(), CUBIC_DECIMETER);
-        let b = Amnt!(0.02) * SQUARE_KILOMETER;
+        let b = 0.02 * SQUARE_KILOMETER;
         let h = amnt * DECIMETER;
         let v = b * h;
-        assert_almost_eq!(v.amount(), Amnt!(2000.) * amnt);
+        assert_almost_eq!(v.value(), 2000. * amnt);
         assert_eq!(v.unit(), CUBIC_METER);
     }
 
     #[test]
     fn test_volume_div_length() {
-        let amnt: AmountT = Amnt!(-0.42);
+        let amnt = -0.42;
         let v = amnt * LITER;
-        let a = Amnt!(0.7) * SQUARE_METER;
+        let a = 0.7 * SQUARE_METER;
         let h = v / a;
-        assert_almost_eq!(h.amount(), v.amount() / a.amount());
+        assert_almost_eq!(h.value(), v.value() / a.value());
         assert_eq!(h.unit(), MILLIMETER);
     }
 }

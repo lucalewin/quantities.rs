@@ -7,7 +7,7 @@
 // $Source$
 // $Revision$
 
-use crate::{AmountT, Quantity};
+use crate::{Amount, Quantity};
 
 /// Trait for quantity converters
 pub trait Converter<Q: Quantity> {
@@ -30,7 +30,7 @@ pub trait Converter<Q: Quantity> {
 pub struct ConversionTable<Q: Quantity, const N: usize> {
     /// Table of tuples (from_unit, to_unit, factor, offset), defining the
     /// conversion to_amount = from_amount * factor + offset
-    pub mappings: [(Q::UnitType, Q::UnitType, AmountT, AmountT); N],
+    pub mappings: [(Q::UnitType, Q::UnitType, Amount, Amount); N],
 }
 
 impl<Q: Quantity, const N: usize> Converter<Q> for ConversionTable<Q, N> {
@@ -40,7 +40,7 @@ impl<Q: Quantity, const N: usize> Converter<Q> for ConversionTable<Q, N> {
         }
         self.mappings.iter().find_map(|(from, to, factor, offset)| {
             (*from == (*qty).unit() && *to == to_unit)
-                .then(|| Q::new(qty.amount() * factor + offset, to_unit))
+                .then(|| Q::new(qty.value() * factor + offset, to_unit))
         })
     }
 }

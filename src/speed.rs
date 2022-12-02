@@ -42,9 +42,9 @@ mod tests {
     fn test_speed() {
         assert_eq!(<Speed as HasRefUnit>::REF_UNIT, SpeedUnit::REF_UNIT);
         assert!(METER_PER_SECOND.is_ref_unit());
-        let amnt: AmountT = Amnt!(235.4);
+        let amnt = 235.4;
         let v = amnt * KILOMETER_PER_HOUR;
-        assert_eq!(v.amount(), amnt);
+        assert_eq!(v.value(), amnt);
         assert_eq!(v.unit(), KILOMETER_PER_HOUR);
         #[cfg(feature = "std")]
         assert_eq!(v.to_string(), "235.4 km/h");
@@ -52,34 +52,34 @@ mod tests {
 
     #[test]
     fn test_length_div_duration() {
-        let al: AmountT = Amnt!(35.1);
+        let al = 35.1;
         let l = al * MILE;
-        let at: AmountT = Amnt!(13.);
+        let at = 13.;
         let t = at * MINUTE;
         let v = l / t;
-        assert_almost_eq!(v.amount(), al / at * Amnt!(0.44704) * Amnt!(60.));
+        assert_almost_eq!(v.value(), al / at * 0.44704 * 60.);
         assert_eq!(v.unit(), METER_PER_SECOND);
     }
 
     #[test]
     fn test_speed_mul_duration() {
-        let av: AmountT = Amnt!(2.94);
+        let av = 2.94;
         let v = av * METER_PER_SECOND;
-        let at = Amnt!(0.7);
+        let at = 0.7;
         let t = at * MINUTE;
         let l = v * t;
-        assert_almost_eq!(l.amount(), av * at * Amnt!(60.));
+        assert_almost_eq!(l.value(), av * at * 60.);
         assert_eq!(l.unit(), METER);
     }
 
     #[test]
     fn test_length_div_speed() {
-        let al = Amnt!(0.7);
+        let al = 0.7;
         let l = al * KILOMETER;
-        let av: AmountT = Amnt!(2.94);
+        let av = 2.94;
         let v = av * METER_PER_SECOND;
         let t = l / v;
-        assert_almost_eq!(t.amount(), al * Amnt!(1000.) / av);
+        assert_almost_eq!(t.value(), al * 1000. / av);
         assert_eq!(t.unit(), SECOND);
     }
 }

@@ -41,9 +41,9 @@ mod tests {
 
     #[test]
     fn test_duration() {
-        let amnt: AmountT = Amnt!(29.35);
+        let amnt = 29.35;
         let d = amnt * MILLISECOND;
-        assert_eq!(d.amount, amnt);
+        assert_eq!(d.value, amnt);
         assert_eq!(d.unit, MILLISECOND);
         #[cfg(feature = "std")]
         assert_eq!(d.to_string(), "29.35 ms");

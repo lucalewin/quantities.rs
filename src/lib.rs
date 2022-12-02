@@ -70,7 +70,7 @@ pub use amnt_dec::{AmountT, Dec, Decimal, AMNT_ONE, AMNT_ZERO};
 #[cfg(all(not(feature = "fpdec"), target_pointer_width = "32"))]
 pub use amnt_f32::{AmountT, AMNT_ONE, AMNT_ZERO};
 #[cfg(all(not(feature = "fpdec"), target_pointer_width = "64"))]
-pub use amnt_f64::{AmountT, AMNT_ONE, AMNT_ZERO};
+pub use amnt_f64::{Amount, AMNT_ONE, AMNT_ZERO};
 pub use converter::{ConversionTable, Converter};
 pub use rate::Rate;
 pub use si_prefixes::SIPrefix;
@@ -90,38 +90,38 @@ pub mod amnt_f32;
 #[doc(hidden)]
 pub mod amnt_f64;
 
-#[cfg(feature = "acceleration")]
+// #[cfg(feature = "acceleration")]
 pub mod acceleration;
-#[cfg(feature = "area")]
+// #[cfg(feature = "area")]
 pub mod area;
-#[cfg(feature = "datathroughput")]
+// #[cfg(feature = "datathroughput")]
 pub mod datathroughput;
-#[cfg(feature = "datavolume")]
+// #[cfg(feature = "datavolume")]
 pub mod datavolume;
-#[cfg(feature = "duration")]
+// #[cfg(feature = "duration")]
 pub mod duration;
-#[cfg(feature = "energy")]
+// #[cfg(feature = "energy")]
 pub mod energy;
-#[cfg(feature = "force")]
+// #[cfg(feature = "force")]
 pub mod force;
-#[cfg(feature = "frequency")]
+// #[cfg(feature = "frequency")]
 pub mod frequency;
-#[cfg(feature = "length")]
+// #[cfg(feature = "length")]
 pub mod length;
-#[cfg(feature = "mass")]
+// #[cfg(feature = "mass")]
 pub mod mass;
-#[cfg(feature = "power")]
+// #[cfg(feature = "power")]
 pub mod power;
-#[cfg(feature = "speed")]
+// #[cfg(feature = "speed")]
 pub mod speed;
-#[cfg(feature = "temperature")]
+// #[cfg(feature = "temperature")]
 pub mod temperature;
-#[cfg(feature = "volume")]
+// #[cfg(feature = "volume")]
 pub mod volume;
 
 /// The abstract type of units used to define quantities.
 pub trait Unit:
-    Copy + Eq + PartialEq + Sized + Mul<AmountT> + fmt::Display
+    Copy + Eq + PartialEq + Sized + Mul<Amount> + fmt::Display
 {
     /// Associated type of quantity
     type QuantityType: Quantity<UnitType = Self>;
@@ -174,7 +174,7 @@ pub trait LinearScaledUnit: Unit {
     /// Returns `Some(unit)` where `unit.scale()` == `Some(amnt)`, or `None` if
     /// there is no such unit.
     #[must_use]
-    fn from_scale(amnt: AmountT) -> Option<Self> {
+    fn from_scale(amnt: Amount) -> Option<Self> {
         for unit in Self::iter() {
             if unit.scale() == amnt {
                 return Some(*unit);
@@ -190,17 +190,17 @@ pub trait LinearScaledUnit: Unit {
     }
 
     /// Returns `factor` so that `factor` * `Self::REFUNIT` == 1 * `self`.
-    fn scale(&self) -> AmountT;
+    fn scale(&self) -> Amount;
 
     /// Returns `factor` so that `factor` * `other` == 1 * `self`.
     #[inline(always)]
-    fn ratio(&self, other: &Self) -> AmountT {
+    fn ratio(&self, other: &Self) -> Amount {
         self.scale() / other.scale()
     }
 }
 
 /// The abstract type of quantities.
-pub trait Quantity: Copy + Sized + Mul<AmountT> {
+pub trait Quantity: Copy + Sized + Mul<Amount> {
     /// Associated type of unit
     type UnitType: Unit<QuantityType = Self>;
 
@@ -222,10 +222,10 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     }
 
     /// Returns a new instance of the type implementing `Quantity`.
-    fn new(amount: AmountT, unit: Self::UnitType) -> Self;
+    fn new(amount: Amount, unit: Self::UnitType) -> Self;
 
     /// Returns the amount of `self`.
-    fn amount(&self) -> AmountT;
+    fn value(&self) -> Amount;
 
     /// Returns the unit of `self`.
     fn unit(&self) -> Self::UnitType;
@@ -234,14 +234,14 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     /// are equal, otherwise `false`.
     #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
-        self.unit() == other.unit() && self.amount() == other.amount()
+        self.unit() == other.unit() && self.value() == other.value()
     }
 
     /// Returns the partial order of `self`s and `other`s amounts, if both have
     /// the same unit, otherwise `None`.
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         if self.unit() == other.unit() {
-            PartialOrd::partial_cmp(&self.amount(), &other.amount())
+            PartialOrd::partial_cmp(&self.value(), &other.value())
         } else {
             None
         }
@@ -254,7 +254,7 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     /// Panics if `self` and `other` have different units.
     fn add(self, rhs: Self) -> Self {
         if self.unit() == rhs.unit() {
-            return Self::new(self.amount() + rhs.amount(), self.unit());
+            return Self::new(self.value() + rhs.value(), self.unit());
         }
         panic!(
             "Can't add '{}' and '{}'.",
@@ -271,7 +271,7 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     /// Panics if `self` and `other` have different units.
     fn sub(self, rhs: Self) -> Self {
         if self.unit() == rhs.unit() {
-            return Self::new(self.amount() - rhs.amount(), self.unit());
+            return Self::new(self.value() - rhs.value(), self.unit());
         }
         panic!(
             "Can't subtract '{}' and '{}'.",
@@ -285,9 +285,9 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     /// # Panics
     ///
     /// Panics if `self` and `other` have different units.
-    fn div(self, rhs: Self) -> AmountT {
+    fn div(self, rhs: Self) -> Amount {
         if self.unit() == rhs.unit() {
-            return self.amount() / rhs.amount();
+            return self.value() / rhs.value();
         }
         panic!(
             "Can't divide '{}' and '{}'.",
@@ -304,17 +304,17 @@ pub trait Quantity: Copy + Sized + Mul<AmountT> {
     /// formatter.
     fn fmt(&self, form: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.unit().symbol() {
-            "" => fmt::Display::fmt(&self.amount(), form),
+            "" => fmt::Display::fmt(&self.value(), form),
             _ => {
                 let tmp: String;
-                let amnt_non_neg = self.amount() >= AMNT_ZERO;
+                let amnt_non_neg = self.value() >= AMNT_ZERO;
                 #[cfg(feature = "fpdec")]
                 let abs_amnt = self.amount().abs();
                 #[cfg(not(feature = "fpdec"))]
                 let abs_amnt = if amnt_non_neg {
-                    self.amount()
+                    self.value()
                 } else {
-                    -self.amount()
+                    -self.value()
                 };
                 if let Some(prec) = form.precision() {
                     tmp = format!("{:.*} {}", prec, abs_amnt, self.unit());
@@ -338,7 +338,7 @@ where
     /// Returns `Some(unit)` where `unit.scale()` == `amnt`, or `None` if
     /// there is no such unit.
     #[must_use]
-    fn unit_from_scale(amnt: AmountT) -> Option<Self::UnitType> {
+    fn unit_from_scale(amnt: Amount) -> Option<Self::UnitType> {
         for unit in Self::iter_units() {
             if unit.scale() == amnt {
                 return Some(*unit);
@@ -349,11 +349,11 @@ where
 
     /// Returns `factor` so that `factor` * `unit` == `self`.
     #[inline(always)]
-    fn equiv_amount(&self, unit: Self::UnitType) -> AmountT {
+    fn equiv_amount(&self, unit: Self::UnitType) -> Amount {
         if self.unit() == unit {
-            self.amount()
+            self.value()
         } else {
-            self.unit().ratio(&unit) * self.amount()
+            self.unit().ratio(&unit) * self.value()
         }
     }
 
@@ -366,17 +366,17 @@ where
     /// `false`.
     #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
-        self.amount() == other.equiv_amount(self.unit())
+        self.value() == other.equiv_amount(self.unit())
     }
 
     /// Returns the partial order of `self`s amount and `other`s eqivalent
     /// amount in `self`s unit.
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         if self.unit() == other.unit() {
-            PartialOrd::partial_cmp(&self.amount(), &other.amount())
+            PartialOrd::partial_cmp(&self.value(), &other.value())
         } else {
             PartialOrd::partial_cmp(
-                &self.amount(),
+                &self.value(),
                 &other.equiv_amount(self.unit()),
             )
         }
@@ -385,19 +385,19 @@ where
     /// Returns the sum of `self` and `other`
     #[inline]
     fn add(self, rhs: Self) -> Self {
-        Self::new(self.amount() + rhs.equiv_amount(self.unit()), self.unit())
+        Self::new(self.value() + rhs.equiv_amount(self.unit()), self.unit())
     }
 
     /// Returns the difference between `self` and `other`
     #[inline]
     fn sub(self, rhs: Self) -> Self {
-        Self::new(self.amount() - rhs.equiv_amount(self.unit()), self.unit())
+        Self::new(self.value() - rhs.equiv_amount(self.unit()), self.unit())
     }
 
     /// Returns the quotient `self` / `other`
     #[inline]
-    fn div(self, rhs: Self) -> AmountT {
-        self.amount() / rhs.equiv_amount(self.unit())
+    fn div(self, rhs: Self) -> Amount {
+        self.value() / rhs.equiv_amount(self.unit())
     }
 
     #[doc(hidden)]
@@ -407,7 +407,7 @@ where
     /// the unit with the smallest scale greater than `amount`, in any case
     /// taking only SI units into account if Self::REF_UNIT is a SI unit.
     #[must_use]
-    fn _fit(amount: AmountT) -> Self {
+    fn _fit(amount: Amount) -> Self {
         let take_all = Self::REF_UNIT.si_prefix().is_none();
         let mut it =
             Self::iter_units().filter(|u| take_all || u.si_prefix().is_some());
@@ -438,7 +438,7 @@ impl One {
 pub const ONE: One = One::One;
 
 impl Unit for One {
-    type QuantityType = AmountT;
+    type QuantityType = Amount;
     fn iter<'a>() -> core::slice::Iter<'a, Self> {
         Self::VARIANTS.iter()
     }
@@ -462,12 +462,12 @@ impl fmt::Display for One {
 
 impl LinearScaledUnit for One {
     const REF_UNIT: Self = ONE;
-    fn scale(&self) -> AmountT {
+    fn scale(&self) -> Amount {
         AMNT_ONE
     }
 }
 
-impl Mul<One> for AmountT {
+impl Mul<One> for Amount {
     type Output = Self;
     #[inline(always)]
     fn mul(self, _rhs: One) -> Self::Output {
@@ -475,24 +475,24 @@ impl Mul<One> for AmountT {
     }
 }
 
-impl Mul<AmountT> for One {
-    type Output = AmountT;
+impl Mul<Amount> for One {
+    type Output = Amount;
     #[inline(always)]
-    fn mul(self, rhs: AmountT) -> Self::Output {
+    fn mul(self, rhs: Amount) -> Self::Output {
         rhs
     }
 }
 
-impl Quantity for AmountT {
+impl Quantity for Amount {
     type UnitType = One;
 
     #[inline(always)]
-    fn new(amount: AmountT, _unit: Self::UnitType) -> Self {
+    fn new(amount: Amount, _unit: Self::UnitType) -> Self {
         amount
     }
 
     #[inline(always)]
-    fn amount(&self) -> AmountT {
+    fn value(&self) -> Amount {
         *self
     }
 
@@ -502,11 +502,11 @@ impl Quantity for AmountT {
     }
 }
 
-impl HasRefUnit for AmountT {
+impl HasRefUnit for Amount {
     const REF_UNIT: One = ONE;
 
     #[inline(always)]
-    fn _fit(amount: AmountT) -> Self {
+    fn _fit(amount: Amount) -> Self {
         amount
     }
 }

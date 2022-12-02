@@ -41,12 +41,12 @@ mod tests {
 
     #[test]
     fn test_speed_div_duration() {
-        let av: AmountT = Amnt!(2.94);
+        let av = 2.94;
         let v = av * METER_PER_SECOND;
-        let at = Amnt!(7.);
+        let at = 7.0;
         let t = at * MILLISECOND;
         let a = v / t;
-        assert_almost_eq!(a.amount(), av / at * Amnt!(1000.));
+        assert_almost_eq!(a.value(), av / at * 1000.);
         assert_eq!(a.unit(), METER_PER_SECOND_SQUARED);
     }
 }

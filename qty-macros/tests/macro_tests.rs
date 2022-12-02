@@ -14,7 +14,7 @@ mod derive_macro_tests {
     #[test]
     #[allow(non_camel_case_types)]
     fn test_derive_constants() {
-        #[derive(Debug, PartialEq, VariantsAsConstants)]
+        #[derive(Debug, PartialEq, Eq, VariantsAsConstants)]
         pub enum TestEnum {
             MultiCamelCase,
             snake_case,
@@ -29,7 +29,7 @@ mod derive_macro_tests {
 
     #[test]
     fn test_derive_enum_iter() {
-        #[derive(Debug, PartialEq, EnumIter)]
+        #[derive(Debug, PartialEq, Eq, EnumIter)]
         pub enum Color {
             Red,
             Green,

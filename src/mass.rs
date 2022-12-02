@@ -47,11 +47,10 @@ mod tests {
     fn test_mass() {
         assert_eq!(<Mass as HasRefUnit>::REF_UNIT, MassUnit::REF_UNIT);
         assert!(KILOGRAM.is_ref_unit());
-        let amnt: AmountT = Amnt!(29.35);
-        let m = amnt * KILOGRAM;
-        assert_eq!(m.amount, amnt);
-        assert_eq!(m.unit, KILOGRAM);
+        let mass = 29.35 * KILOGRAM;
+        assert_eq!(mass.value, 29.35);
+        assert_eq!(mass.unit, KILOGRAM);
         #[cfg(feature = "std")]
-        assert_eq!(m.to_string(), "29.35 kg");
+        assert_eq!(mass.to_string(), "29.35 kg");
     }
 }

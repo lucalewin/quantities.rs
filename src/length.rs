@@ -55,9 +55,9 @@ mod tests {
     fn test_length() {
         assert_eq!(<Length as HasRefUnit>::REF_UNIT, LengthUnit::REF_UNIT);
         assert!(METER.is_ref_unit());
-        let amnt: AmountT = Amnt!(29.35);
+        let amnt = 29.35;
         let l = amnt * CENTIMETER;
-        assert_eq!(l.amount, amnt);
+        assert_eq!(l.value, amnt);
         assert_eq!(l.unit, CENTIMETER);
         #[cfg(feature = "std")]
         assert_eq!(l.to_string(), "29.35 cm");

@@ -11,7 +11,7 @@
 
 use crate::{duration::Duration, prelude::*};
 
-#[quantity(AmountT / Duration)]
+#[quantity(Amount / Duration)]
 #[ref_unit(Hertz, "Hz", NONE, "Reference unit of quantity `Frequency`")]
 #[unit(Kilohertz, "kHz", KILO, 1000, "1000·Hz")]
 #[unit(Megahertz, "MHz", MEGA, 1000000, "1000000·Hz")]
@@ -38,11 +38,11 @@ mod tests {
 
     #[test]
     fn test_amount_div_duration() {
-        let a: AmountT = Amnt!(9030.);
-        let at: AmountT = Amnt!(2.5);
+        let a = 9030.;
+        let at = 2.5;
         let t = at * MILLISECOND;
         let f = a / t;
-        assert_almost_eq!(f.amount(), a / at);
+        assert_almost_eq!(f.value(), a / at);
         assert_eq!(f.unit(), KILOHERTZ);
     }
 }

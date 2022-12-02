@@ -36,12 +36,12 @@ mod tests {
 
     #[test]
     fn test_mass_mul_acceleration() {
-        let am = Amnt!(75.8);
+        let am = 75.8;
         let m = am * GRAM;
-        let aa: AmountT = Amnt!(9.4);
+        let aa = 9.4;
         let a = aa * METER_PER_SECOND_SQUARED;
         let f = m * a;
-        assert_almost_eq!(f.amount(), aa * am / Amnt!(1000.));
+        assert_almost_eq!(f.value(), aa * am / 1000.);
         assert_eq!(f.unit(), NEWTON);
     }
 }
