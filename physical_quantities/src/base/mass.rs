@@ -9,7 +9,7 @@
 
 //! Definition of basic quantity `Mass`.
 
-use crate::prelude::*;
+use quantities::prelude::*;
 
 #[quantity]
 #[ref_unit(Kilogram, "kg", KILO, "Reference unit of quantity `Mass`")]

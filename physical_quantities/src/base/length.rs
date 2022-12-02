@@ -9,7 +9,7 @@
 
 //! Definition of basic quantity `Length`.
 
-use crate::prelude::*;
+use quantities::prelude::*;
 
 #[quantity]
 #[ref_unit(Meter, "m", NONE, "Reference unit of quantity `Length`")]

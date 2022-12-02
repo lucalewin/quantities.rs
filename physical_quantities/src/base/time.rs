@@ -9,7 +9,7 @@
 
 //! Definition of basic quantity `Duration`.
 
-use crate::prelude::*;
+use quantities::prelude::*;
 
 #[quantity]
 #[ref_unit(Second, "s", NONE, "Reference unit of quantity `Duration`")]

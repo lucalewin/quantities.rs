@@ -70,7 +70,7 @@ pub use converter::{ConversionTable, Converter};
 pub use rate::Rate;
 pub use si_prefixes::SIPrefix;
 
-mod converter;
+pub mod converter;
 pub mod prelude;
 mod rate;
 mod si_prefixes;
@@ -78,20 +78,7 @@ mod si_prefixes;
 #[doc(hidden)]
 pub mod value;
 
-pub mod acceleration;
-pub mod area;
-pub mod datathroughput;
-pub mod datavolume;
-pub mod duration;
-pub mod energy;
-pub mod force;
-pub mod frequency;
-pub mod length;
-pub mod mass;
-pub mod power;
-pub mod speed;
-pub mod temperature;
-pub mod volume;
+
 
 /// The abstract type of units used to define quantities.
 pub trait Unit:

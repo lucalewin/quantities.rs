@@ -9,7 +9,7 @@
 
 //! Definition of basic quantity `Temperature`.
 
-use crate::{converter::ConversionTable, prelude::*};
+use quantities::{converter::ConversionTable, prelude::*};
 
 #[rustfmt::skip]
 #[quantity]
@@ -61,7 +61,7 @@ pub const TEMPERATURE_CONVERTER: ConversionTable<Temperature, 6> =
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{assert_almost_eq, converter::Converter};
+    use quantities::{assert_almost_eq, converter::Converter};
 
     #[test]
     fn test_temperature() {
