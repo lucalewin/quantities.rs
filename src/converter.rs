@@ -7,6 +7,8 @@
 // $Source$
 // $Revision$
 
+//! this module contains the converter trait for quantities
+
 use crate::{Amount, Quantity};
 
 /// Trait for quantity converters
