@@ -68,12 +68,12 @@ use core::{
 pub use value::{Amount, AMNT_ZERO, AMNT_ONE};
 pub use converter::{ConversionTable, Converter};
 pub use rate::Rate;
-pub use si_prefixes::SIPrefix;
+pub use prefixes::SIPrefix;
 
 pub mod converter;
 pub mod prelude;
 mod rate;
-mod si_prefixes;
+mod prefixes;
 
 #[doc(hidden)]
 pub mod value;
