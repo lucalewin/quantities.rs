@@ -17,14 +17,8 @@ use quantities::prelude::*;
 #[unit(Micrometer, "µm", MICRO, 0.000001, "0.000001·m")]
 #[unit(Millimeter, "mm", MILLI, 0.001, "0.001·m")]
 #[unit(Centimeter, "cm", CENTI, 0.01, "0.01·m")]
-#[unit(Inch, "in", 0.0254, "2.54·cm")]
 #[unit(Decimeter, "dm", DECI, 0.1, "0.1·m")]
-#[unit(Foot, "ft", 0.3048, "12·in")]
-#[unit(Yard, "yd", 0.9144, "3·ft")]
-#[unit(Chain, "ch", 20.1168, "22·yd")]
-#[unit(Furlong, "fur", 201.168, "10·ch")]
 #[unit(Kilometer, "km", KILO, 1000, "1000·m")]
-#[unit(Mile, "mi", 1609.344, "8·fur")]
 /// The quantity of distance between two points in spacetime.
 ///
 /// Reference unit: Meter ('m')

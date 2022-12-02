@@ -15,15 +15,10 @@ use crate::{length::Length, prelude::*};
 #[ref_unit(Square_Meter, "m²", NONE, "Reference unit of quantity `Area`")]
 #[unit(Square_Millimeter, "mm²", MICRO, 0.000001, "mm²")]
 #[unit(Square_Centimeter, "cm²", 0.0001, "cm²")]
-#[unit(Square_Inch, "in²", 0.00064516, "in²")]
 #[unit(Square_Decimeter, "dm²", CENTI, 0.01, "dm²")]
-#[unit(Square_Foot, "ft²", 0.09290304, "ft²")]
-#[unit(Square_Yard, "yd²", 0.83612736, "yd²")]
 #[unit(Are, "a", HECTO, 100, "100·m²")]
-#[unit(Acre, "ac", 4046.8564224, "4840·yd²")]
 #[unit(Hectare, "ha", 10000, "100·a")]
 #[unit(Square_Kilometer, "km²", MEGA, 1000000, "km²")]
-#[unit(Square_Mile, "mi²", 2589988.110336, "mi²")]
 /// The quantity expressing the extent of a two-dimensional region.
 ///
 /// Definition: Length²

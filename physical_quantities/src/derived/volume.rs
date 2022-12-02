@@ -17,12 +17,9 @@ use crate::{area::Area, length::Length, prelude::*};
 #[unit(Cubic_Centimeter, "cm³", MICRO, 0.000001, "cm³")]
 #[unit(Milliliter, "ml", MICRO, 0.000001, "0.001·l")]
 #[unit(Centiliter, "cl", 0.00001, "0.01·l")]
-#[unit(Cubic_Inch, "in³", 0.000016387064, "in³")]
 #[unit(Deciliter, "dl", 0.0001, "0.1·l")]
 #[unit(Cubic_Decimeter, "dm³", MILLI, 0.001, "dm³")]
 #[unit(Liter, "l", MILLI, 0.001, "0.001·m³")]
-#[unit(Cubic_Foot, "ft³", 0.028316846592, "ft³")]
-#[unit(Cubic_Yard, "yd³", 0.764554857984, "yd³")]
 #[unit(Cubic_Kilometer, "km³", GIGA, 1000000000, "km³")]
 /// The quantity expressing the amount of three-dimensional space enclosed by a
 /// closed surface.

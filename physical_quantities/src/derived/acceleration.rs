@@ -18,7 +18,6 @@ use crate::{duration::Duration, prelude::*, speed::Speed};
     NONE,
     "Reference unit of quantity `Acceleration`"
 )]
-#[unit(Yards_per_Second_squared, "yd/s²", 0.9144, "yd/s²")]
 /// Rate of change of an objects speed with respect to time.
 ///
 /// Definition: Speed/Duration = Length/Duration²

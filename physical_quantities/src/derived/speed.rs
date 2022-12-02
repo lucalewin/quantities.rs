@@ -14,7 +14,6 @@ use crate::{duration::Duration, length::Length, prelude::*};
 #[quantity(Length / Duration)]
 #[ref_unit(Meter_per_Second, "m/s", NONE, "Reference unit of quantity `Speed`")]
 #[unit(Kilometer_per_Hour, "km/h", 0.2777777777777778, "km/h")]
-#[unit(Miles_per_Hour, "mph", 0.44704, "mi/h")]
 /// Magnitude of the change of an objects position per unit of time
 ///
 /// Definition: Length/Duration
