@@ -9,7 +9,7 @@
 
 //! Definition of derived quantity `Acceleration`.
 
-use crate::{duration::Duration, prelude::*, speed::Speed};
+use quantities::{duration::Duration, prelude::*, speed::Speed};
 
 #[quantity(Speed / Duration)]
 #[ref_unit(
@@ -28,13 +28,12 @@ use crate::{duration::Duration, prelude::*, speed::Speed};
 ///
 /// | Symbol | Name                     | Definition    | Equivalent in 'm/s²' |
 /// |--------|--------------------------|---------------|----------------------|
-/// | yd/s²  | Yards per Second squared | yd/s²         | 0.9144               |
 pub struct Acceleration {}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
+    use quantities::{
         assert_almost_eq, duration::MILLISECOND, speed::METER_PER_SECOND,
     };
 

@@ -9,7 +9,7 @@
 
 //! Definition of derived quantity `Force`.
 
-use crate::{acceleration::Acceleration, mass::Mass, prelude::*};
+use quantities::{acceleration::Acceleration, mass::Mass, prelude::*};
 
 #[quantity(Mass * Acceleration)]
 #[ref_unit(Newton, "N", NONE, "Reference unit of quantity `Force`")]

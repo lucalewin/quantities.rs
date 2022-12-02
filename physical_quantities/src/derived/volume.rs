@@ -36,12 +36,9 @@ use crate::{area::Area, length::Length, prelude::*};
 /// | cm³    | Cubic Centimeter      | cm³               | 0.000001            |
 /// | ml     | Milliliter            | 0.001·l           | 0.000001            |
 /// | cl     | Centiliter            | 0.01·l            | 0.00001             |
-/// | in³    | Cubic Inch            | in³               | 0.000016387064      |
 /// | dl     | Deciliter             | 0.1·l             | 0.0001              |
 /// | dm³    | Cubic Decimeter       | dm³               | 0.001               |
 /// | l      | Liter                 | 0.001·m³          | 0.001               |
-/// | ft³    | Cubic Foot            | ft³               | 0.028316846592      |
-/// | yd³    | Cubic Yard            | yd³               | 0.764554857984      |
 /// | km³    | Cubic Kilometer       | km³               | 1000000000          |
 pub struct Volume {}
 

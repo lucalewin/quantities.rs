@@ -25,7 +25,6 @@ use crate::{duration::Duration, length::Length, prelude::*};
 /// | Symbol | Name                  | Definition        | Equivalent in 'm/s' |
 /// |--------|-----------------------|-------------------|---------------------|
 /// | km/h   | Kilometer per Hour    | km/h              | 5/18                |
-/// | mph    | Miles per Hour        | mi/h              | 0.44704             |
 pub struct Speed {}
 
 #[cfg(test)]
