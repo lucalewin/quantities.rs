@@ -148,7 +148,7 @@ pub fn codegen_qty_single_unit(
         pub struct #qty_ident {
             value: Amount
         }
-        impl Quantity for #qty_ident {
+        impl const Quantity for #qty_ident {
             type UnitType = #unit_enum_ident;
 
             #[inline(always)]
@@ -166,6 +166,7 @@ pub fn codegen_qty_single_unit(
                 Self::UnitType::#unit_ident
             }
         }
+        impl QuantityImpl for #qty_ident {}
         impl Add<Self> for #qty_ident {
             type Output = Self;
             #[inline(always)]
