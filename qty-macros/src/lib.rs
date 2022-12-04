@@ -9,7 +9,6 @@
 
 #![doc = include_str ! ("../README.md")]
 
-// mod quantity_attr_helper;
 mod parsing;
 mod codegen;
 
@@ -21,10 +20,7 @@ use ::quote::quote;
 use ::syn::{parse_macro_input, Ident, ItemEnum};
 
 use crate::parsing::{analyze, parse_args, parse_item};
-// use crate::quantity_attr_helper::codegen;
-use crate::codegen::*;
-// use crate::codegen::unit::*;
-// use crate::codegen::quantity::*;
+use crate::codegen::codegen;
 
 /// Derives a constant for each variant of a fieldless enum.
 ///

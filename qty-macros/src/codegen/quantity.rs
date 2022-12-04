@@ -5,7 +5,6 @@ use quote::quote;
 use crate::parsing::*;
 use crate::codegen::unit::*;
 
-
 pub fn codegen_impl_quantity(
     qty_ident: &syn::Ident,
     unit_enum_ident: &syn::Ident,
@@ -16,7 +15,7 @@ pub fn codegen_impl_quantity(
             value: Amount,
             unit: #unit_enum_ident
         }
-        impl Quantity for #qty_ident {
+        impl const Quantity for #qty_ident {
             type UnitType = #unit_enum_ident;
             #[inline(always)]
             fn new(value: Amount, unit: Self::UnitType) -> Self {
@@ -31,6 +30,7 @@ pub fn codegen_impl_quantity(
                 self.unit
             }
         }
+        impl QuantityImpl for #qty_ident {}
     )
 }
 
@@ -142,34 +142,34 @@ pub(crate) fn codegen_qty_without_ref_unit(
         impl PartialEq<Self> for #qty_ident {
             #[inline(always)]
             fn eq(&self, other: &Self) -> bool {
-                <Self as Quantity>::eq(self, other)
+                <Self as QuantityImpl>::eq(self, other)
             }
         }
         impl PartialOrd for #qty_ident {
             #[inline(always)]
             fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-                <Self as Quantity>::partial_cmp(self, other)
+                <Self as QuantityImpl>::partial_cmp(self, other)
             }
         }
         impl Add<Self> for #qty_ident {
             type Output = Self;
             #[inline(always)]
             fn add(self, rhs: Self) -> Self::Output {
-                <Self as Quantity>::add(self, rhs)
+                <Self as QuantityImpl>::add(self, rhs)
             }
         }
         impl Sub<Self> for #qty_ident {
             type Output = Self;
             #[inline(always)]
             fn sub(self, rhs: Self) -> Self::Output {
-                <Self as Quantity>::sub(self, rhs)
+                <Self as QuantityImpl>::sub(self, rhs)
             }
         }
         impl Div<Self> for #qty_ident {
             type Output = Amount;
             #[inline(always)]
             fn div(self, rhs: Self) -> Self::Output {
-                <Self as Quantity>::div(self, rhs)
+                <Self as QuantityImpl>::div(self, rhs)
             }
         }
     )
@@ -180,7 +180,7 @@ pub fn codegen_impl_std_traits(qty_ident: &syn::Ident) -> TokenStream {
         impl fmt::Display for #qty_ident {
             #[inline(always)]
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                <Self as Quantity>::fmt(self, f)
+                <Self as QuantityImpl>::fmt(self, f)
             }
         }
         impl Mul<#qty_ident> for Amount {

@@ -61,5 +61,3 @@ pub(crate) fn codegen(
         #code_mul_div_base_qties
     )
 }
-
-

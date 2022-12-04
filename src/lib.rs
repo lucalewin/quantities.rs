@@ -9,6 +9,8 @@
 
 #![doc = include_str ! ("../README.md")]
 #![cfg_attr(not(feature = "std"), no_std)]
+// (unstable) features
+#![feature(const_trait_impl)]
 // activate some rustc lints
 #![deny(non_ascii_idents)]
 #![deny(unsafe_code)]
@@ -77,6 +79,7 @@ mod prefixes;
 
 #[doc(hidden)]
 pub mod value;
+mod si;
 
 
 
@@ -160,11 +163,145 @@ pub trait LinearScaledUnit: Unit {
     }
 }
 
+#[const_trait]
 /// The abstract type of quantities.
 pub trait Quantity: Copy + Sized + Mul<Amount> {
     /// Associated type of unit
     type UnitType: Unit<QuantityType = Self>;
 
+    // FIXME
+    // /// Returns an iterator over the variants of `Self::UnitType`.
+    // fn iter_units<'a>() -> core::slice::Iter<'a, Self::UnitType> {
+    //     Self::UnitType::iter()
+    // }
+
+    // FIXME
+    // /// Returns `Some(unit)` where `unit.symbol()` == `symbol`, or `None` if
+    // /// there is no such unit.
+    // #[must_use]
+    // fn unit_from_symbol(symbol: &str) -> Option<Self::UnitType> {
+    //     for unit in Self::iter_units() {
+    //         if unit.symbol() == symbol {
+    //             return Some(*unit);
+    //         }
+    //     }
+    //     None
+    // }
+
+    /// Returns a new instance of the type implementing `Quantity`.
+    fn new(value: Amount, unit: Self::UnitType) -> Self;
+
+    /// Returns the amount of `self`.
+    fn value(&self) -> Amount;
+
+    /// Returns the unit of `self`.
+    fn unit(&self) -> Self::UnitType;
+
+    // FIXME
+    // /// Return `true` if `self` and `other` have the same unit and their amounts
+    // /// are equal, otherwise `false`.
+    // #[inline(always)]
+    // fn eq(&self, other: &Self) -> bool {
+    //     self.unit() == other.unit() && self.value() == other.value()
+    // }
+
+    // FIXME
+    // /// Returns the partial order of `self`s and `other`s amounts, if both have
+    // /// the same unit, otherwise `None`.
+    // fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    //     if self.unit() == other.unit() {
+    //         PartialOrd::partial_cmp(&self.value(), &other.value())
+    //     } else {
+    //         None
+    //     }
+    // }
+
+    // FIXME
+    // /// Returns the sum of `self` and `other`, if both have the same unit.
+    // ///
+    // /// # Panics
+    // ///
+    // /// Panics if `self` and `other` have different units.
+    // fn add(self, rhs: Self) -> Self {
+    //     if self.unit() == rhs.unit() {
+    //         return Self::new(self.value() + rhs.value(), self.unit());
+    //     }
+    //     panic!(
+    //         "Can't add '{}' and '{}'.",
+    //         self.unit().symbol(),
+    //         rhs.unit().symbol()
+    //     );
+    // }
+
+    // FIXME
+    // /// Returns the difference between `self` and `other`, if both have the same
+    // /// unit.
+    // ///
+    // /// # Panics
+    // ///
+    // /// Panics if `self` and `other` have different units.
+    // fn sub(self, rhs: Self) -> Self {
+    //     if self.unit() == rhs.unit() {
+    //         return Self::new(self.value() - rhs.value(), self.unit());
+    //     }
+    //     panic!(
+    //         "Can't subtract '{}' and '{}'.",
+    //         self.unit().symbol(),
+    //         rhs.unit().symbol(),
+    //     );
+    // }
+
+    // FIXME
+    // /// Returns the quotient `self` / `other`, if both have the same unit.
+    // ///
+    // /// # Panics
+    // ///
+    // /// Panics if `self` and `other` have different units.
+    // fn div(self, rhs: Self) -> Amount {
+    //     if self.unit() == rhs.unit() {
+    //         return self.value() / rhs.value();
+    //     }
+    //     panic!(
+    //         "Can't divide '{}' and '{}'.",
+    //         self.unit().symbol(),
+    //         rhs.unit().symbol()
+    //     );
+    // }
+
+    // FIXME
+    // /// Formats `self` using the given formatter.
+    // ///
+    // /// # Errors
+    // ///
+    // /// This function will only return an instance of `Error` returned from the
+    // /// formatter.
+    // fn fmt(&self, form: &mut fmt::Formatter<'_>) -> fmt::Result {
+    //     match self.unit().symbol() {
+    //         "" => fmt::Display::fmt(&self.value(), form),
+    //         _ => {
+    //             let tmp: String;
+    //             let amnt_non_neg = self.value() >= AMNT_ZERO;
+    //             #[cfg(feature = "fpdec")]
+    //             let abs_amnt = self.amount().abs();
+    //             #[cfg(not(feature = "fpdec"))]
+    //             let abs_amnt = if amnt_non_neg {
+    //                 self.value()
+    //             } else {
+    //                 -self.value()
+    //             };
+    //             if let Some(prec) = form.precision() {
+    //                 tmp = format!("{:.*} {}", prec, abs_amnt, self.unit());
+    //             } else {
+    //                 tmp = format!("{} {}", abs_amnt, self.unit());
+    //             }
+    //             form.pad_integral(amnt_non_neg, "", &tmp)
+    //         }
+    //     }
+    // }
+}
+
+/// TODO: add some good documentation
+pub trait QuantityImpl: Quantity {
     /// Returns an iterator over the variants of `Self::UnitType`.
     fn iter_units<'a>() -> core::slice::Iter<'a, Self::UnitType> {
         Self::UnitType::iter()
@@ -181,15 +318,6 @@ pub trait Quantity: Copy + Sized + Mul<Amount> {
         }
         None
     }
-
-    /// Returns a new instance of the type implementing `Quantity`.
-    fn new(amount: Amount, unit: Self::UnitType) -> Self;
-
-    /// Returns the amount of `self`.
-    fn value(&self) -> Amount;
-
-    /// Returns the unit of `self`.
-    fn unit(&self) -> Self::UnitType;
 
     /// Return `true` if `self` and `other` have the same unit and their amounts
     /// are equal, otherwise `false`.
@@ -289,7 +417,7 @@ pub trait Quantity: Copy + Sized + Mul<Amount> {
 }
 
 /// Trait for quantities having a reference unit
-pub trait HasRefUnit: Quantity + Add<Self> + Sub<Self> + Div<Self>
+pub trait HasRefUnit: QuantityImpl + Add<Self> + Sub<Self> + Div<Self>
 where
     <Self as Quantity>::UnitType: LinearScaledUnit,
 {
@@ -462,6 +590,8 @@ impl Quantity for Amount {
         ONE
     }
 }
+
+impl QuantityImpl for Amount {}
 
 impl HasRefUnit for Amount {
     const REF_UNIT: One = ONE;

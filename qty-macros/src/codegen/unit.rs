@@ -49,7 +49,6 @@ pub(crate) fn codegen_unit_constants(
     code
 }
 
-
 pub(crate) fn codegen_fn_si_prefix(units: &Vec<UnitDef>) -> TokenStream {
     let mut code = TokenStream::new();
     for unit in units {
@@ -102,14 +101,14 @@ pub(crate) fn codegen_impl_mul_amnt_unit(
     unit_enum_ident: &syn::Ident,
 ) -> TokenStream {
     quote!(
-        impl Mul<#unit_enum_ident> for Amount {
+        impl const Mul<#unit_enum_ident> for Amount {
             type Output = #qty_ident;
             #[inline(always)]
             fn mul(self, rhs: #unit_enum_ident) -> Self::Output {
                 Self::Output::new(self, rhs)
             }
         }
-        impl Mul<Amount> for #unit_enum_ident {
+        impl const Mul<Amount> for #unit_enum_ident {
             type Output = #qty_ident;
             #[inline(always)]
             fn mul(self, rhs: Amount) -> Self::Output {

@@ -19,7 +19,7 @@ pub use core::ops::{Add, Div, Mul, Sub};
 pub use qty_macros::quantity;
 
 pub use crate::{
-    Amount, HasRefUnit, LinearScaledUnit, Quantity, Rate, SIPrefix,
+    Amount, HasRefUnit, LinearScaledUnit, Quantity, QuantityImpl, Rate, SIPrefix,
     Unit, ONE,
 };
 #[cfg(feature = "fpdec")]
