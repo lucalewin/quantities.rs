@@ -430,7 +430,7 @@ pub fn codegen_impl_div_qties(
 
 pub(crate) fn codegen_impl_mul_div_qties(
     qty_ident: &syn::Ident,
-    derived_as: &Option<DerivedAs>,
+    derived_as: Option<&DerivedAs>,
 ) -> TokenStream {
     match derived_as {
         None => TokenStream::new(),

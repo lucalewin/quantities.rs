@@ -49,8 +49,24 @@ pub(crate) fn codegen(
         codegen_impl_mul_amnt_unit(&qty_ident, &unit_enum_ident);
     let code_impl_unit_display = codegen_impl_unit_display(&unit_enum_ident);
     let code_impl_std_traits = codegen_impl_std_traits(&qty_ident);
-    let code_mul_div_base_qties =
-        codegen_impl_mul_div_qties(&qty_ident, &qty_def.derived_as);
+    let code_mul_div_base_qties = {
+        let mut code = quote::quote!();
+
+        match &qty_def.derived_by {
+            Some(derive) => {
+                for derived_as in &derive.derives {
+                    let d_a = codegen_impl_mul_div_qties(&qty_ident, Some(derived_as));
+                    code = quote::quote!(
+                        #code
+                        #d_a
+                    )
+                }
+            },
+            None => todo!("codegen(): None branch not implemented yet")
+        }
+
+        code
+    };
     quote!(
         #code_attrs
         #code_qty

@@ -205,7 +205,7 @@ pub fn derive_enum_iter(input: TokenStream) -> TokenStream {
 pub fn quantity(args: TokenStream, item: TokenStream) -> TokenStream {
     let mut item_ast = parse_item(item.into());
     let mut qty_def = analyze(&mut item_ast);
-    qty_def.derived_as = parse_args(args.into());
+    qty_def.derived_by = parse_args(args.into());
     let code = codegen(&qty_def, &item_ast.attrs);
     code.into()
 }

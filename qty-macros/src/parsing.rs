@@ -19,7 +19,7 @@ pub(crate) struct UnitDef {
 
 pub(crate) struct QtyDef {
     pub(crate) qty_ident: syn::Ident,
-    pub(crate) derived_as: Option<DerivedAs>,
+    pub(crate) derived_by: Option<Derive>,
     pub(crate) ref_unit_ident: Option<syn::Ident>,
     pub(crate) units: Vec<UnitDef>,
 }
@@ -28,7 +28,7 @@ impl QtyDef {
     fn new(qty_id: syn::Ident) -> Self {
         Self {
             qty_ident: qty_id,
-            derived_as: None,
+            derived_by: None,
             ref_unit_ident: None,
             units: vec![],
         }
@@ -45,38 +45,62 @@ fn get_ident(expr: &syn::Expr) -> Option<&syn::Ident> {
     }
 }
 
-pub(crate) fn parse_args(args: TokenStream) -> Option<DerivedAs> {
+pub(crate) struct Derive {
+    pub(crate) derives: Vec<DerivedAs>
+}
+
+impl syn::parse::Parse for Derive {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        const ARGS_ERROR: &str =
+            "Unknown argument(s) given to attribute `quantity`.";
+        const OPERATOR_ERROR: &str = "Binary expression with '*' or '/' expected.";
+        const OPERAND_ERROR: &str = "Identifier expected.";
+        #[rustfmt::skip]
+        const ARGS_HELP: &str =
+            "Use `#[quantity]`\n\
+            or  `#[quantity(<lhs_ident> * <rhs_ident>]`\n\
+            or  `#[quantity(<lhs_ident> / <rhs_ident>]`.";
+
+        let x = syn::punctuated::Punctuated::<syn::Expr, syn::Token![,]>::parse_terminated(input).unwrap();
+
+        let mut derive = Derive { derives: Vec::with_capacity(x.len()) };
+
+        for expr in x {
+            match expr {
+                syn::Expr::Binary(args) => match args.op {
+                    syn::BinOp::Mul(_) | syn::BinOp::Div(_) => {
+                        let lhs = get_ident(args.left.as_ref());
+                        let rhs = get_ident(args.right.as_ref());
+                        if lhs.is_none() || rhs.is_none() {
+                            abort!(args, OPERAND_ERROR; help = ARGS_HELP)
+                        }
+                        derive.derives.push(DerivedAs {
+                            lhs_ident: lhs.unwrap().clone(),
+                            op: args.op,
+                            rhs_ident: rhs.unwrap().clone(),
+                        });
+                    }
+                    _ => abort!(args, OPERATOR_ERROR; help = ARGS_HELP),
+                },
+                _ => abort!(expr, ARGS_ERROR; help = ARGS_HELP),
+            }
+        }
+
+        Ok(derive)
+    }
+}
+
+pub(crate) fn parse_args(args: TokenStream) -> Option<Derive> {
     const ARGS_ERROR: &str =
         "Unknown argument(s) given to attribute `quantity`.";
-    const OPERATOR_ERROR: &str = "Binary expression with '*' or '/' expected.";
-    const OPERAND_ERROR: &str = "Identifier expected.";
     #[rustfmt::skip]
     const ARGS_HELP: &str =
         "Use `#[quantity]`\n\
          or  `#[quantity(<lhs_ident> * <rhs_ident>]`\n\
          or  `#[quantity(<lhs_ident> / <rhs_ident>]`.";
 
-    if args.is_empty() {
-        None
-    } else if let Ok(expr) = syn::parse2::<syn::Expr>(args) {
-        match expr {
-            syn::Expr::Binary(args) => match args.op {
-                syn::BinOp::Mul(_) | syn::BinOp::Div(_) => {
-                    let lhs = get_ident(args.left.as_ref());
-                    let rhs = get_ident(args.right.as_ref());
-                    if lhs.is_none() || rhs.is_none() {
-                        abort!(args, OPERAND_ERROR; help = ARGS_HELP)
-                    }
-                    Some(DerivedAs {
-                        lhs_ident: lhs.unwrap().clone(),
-                        op: args.op,
-                        rhs_ident: rhs.unwrap().clone(),
-                    })
-                }
-                _ => abort!(args, OPERATOR_ERROR; help = ARGS_HELP),
-            },
-            _ => abort!(expr, ARGS_ERROR; help = ARGS_HELP),
-        }
+    if let Ok(derive) = syn::parse::<Derive>(args.into()) {
+        Some(derive)
     } else {
         abort_call_site!(ARGS_ERROR; help = ARGS_HELP)
     }
